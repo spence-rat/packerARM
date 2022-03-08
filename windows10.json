@@ -1,0 +1,54 @@
+{"builders": [
+    {
+        "type": "azure-arm",
+
+
+        "client_id": "{{user `azure-client-id`}}",
+        "client_secret": "{{user `azure-client-secret`}}",
+        "tenant_id": "{{user `azure-tenant-id`}}",
+        "subscription_id": "{{user `azure-subscription-id`}}",
+
+        "location": "{{user `azure-region`}}",
+        "temp_resource_group_name": "packerRG-{{timestamp}}",
+        "managed_image_name": "packerWindows10-{{timestamp}}",
+        "managed_image_resource_group_name": "{{user `azure-resource-group`}}",
+        
+        "os_type": "Windows",
+        "image_publisher": "microsoft-hyperv",
+        "image_offer": "windows10preview",
+        "image_sku": "pro-preview",
+        
+        "communicator": "winrm",
+        "winrm_use_ssl": true,
+        "winrm_insecure": true,
+        "winrm_timeout": "5m",
+        "winrm_username": "packer",
+
+        "azure_tags": {
+            "region": "east",
+            "type": "compute",
+            "project": "packer"
+        },
+	"plan_info": {
+            "plan_name": "pro-preview",
+            "plan_product": "windows10preview",
+            "plan_publisher": "microsoft-hyperv"
+        },
+        "vm_size": "{{user `vm-size`}}"
+    }
+],
+"provisioners": [
+    {
+        "type": "powershell",
+        "inline": [
+            "while ((Get-Service RdAgent).Status -ne 'Running') { Start-Sleep -s 5 }",
+            "while ((Get-Service WindowsAzureGuestAgent).Status -ne 'Running') { Start-Sleep -s 5 }",
+            "Set-ExecutionPolicy Bypass -Scope Process -Force",
+            "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12",
+            "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))",
+            "choco install sysinternals -y --force --force-dependencies",
+            "choco install regshot -y --force --force-dependencies"
+        ]
+    }
+]
+}
