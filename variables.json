@@ -1,0 +1,11 @@
+{
+    
+    "azure-subscription-id": "subscription-id",
+    "azure-client-id": "client-id",
+    "azure-client-secret": "client-secret",
+    "azure-tenant-id": "tenant-id",
+    "azure-resource-group": "resource-group-name",
+    "azure-region": "region",
+    "vm-size": "vm-size"
+  
+}
